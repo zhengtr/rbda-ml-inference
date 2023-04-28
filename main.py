@@ -1,4 +1,3 @@
-import argparse
 from detoxify import Detoxify
 import torch
 import pandas as pd
