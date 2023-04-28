@@ -1,20 +1,16 @@
 import argparse
 from detoxify import Detoxify
-from logger import create_logger
 import torch
 import pandas as pd
-
-parser = argparse.ArgumentParser(description='Inference')
 
 
 
 def main():
-    logger = create_logger("inference.log")
     if torch.cuda.is_available():
         device = torch.device('cuda') 
     else:
         device = torch.device('cpu')
-    logger.info(f'Using device: {str(device).upper()}.\n')
+    print(f'Using device: {str(device).upper()}.\n')
     
     model = Detoxify('original', device=device)
     test_text = [
