@@ -9,8 +9,9 @@ from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='Inference')
 parser.add_argument("--data_type", choices=['questions', 'answers'], type=str, help="Data Type")
-parser.add_argument("--data_path", default="./sample_data/mini_answers",type=str, help="Path to data file")
+parser.add_argument("--data_path", default="./sample_data/mini_answers_id",type=str, help="Path to data file")
 parser.add_argument("--chunk_size", default=2, type=int, help="Inference batch size")
+parser.add_argument("--output_path", default="./sample_data/mini_answers_score",type=str, help="Path to output file")
 
 
 def main():
@@ -31,19 +32,11 @@ def main():
     data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=lambda x: x[0], batch_size=1, shuffle=False)
     
     model = Detoxify('original', device=device)
+    use_header = True
     for key, body in tqdm(data_loader, desc="Scoring"):
         res = model.predict(body)
-        print(pd.DataFrame(res, index=key).round(5))
-        
-    raise NotImplementedError
-    
-    test_text = [
-        "<p>the solution can be obtained by using the <strong>outputstream</strong> and using <strong>files.",
-        "Hey fk you",
-        "<p>Dumbass, the solution can be obtained by using the <strong>outputstream</strong> and using <strong>files.",
-    ]
-    result = model.predict(test_text)
-    print(pd.DataFrame(result, index=test_text).round(5))
+        pd.DataFrame(res, index=key).round(5).rename_axis('Source').reset_index().to_csv(args.output_path, mode="a", index=False, header=use_header)
+        use_header = False
 
 if __name__ == "__main__":
     main()
