@@ -3,11 +3,11 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 
 class CSVDataset(Dataset):
-    def __init__(self, path, header=None, chunk_size=1000):
+    def __init__(self, path, header=None, chunk_size=100):
         self.path = path
         self.chunk_size = chunk_size
         self.header = header
-        self.length = sum(1 for line in open(path))
+        self.length = sum(1 for line in open(path, encoding="utf8"))
         self.id_count = 0
         
     def __getitem__(self, idx):
@@ -22,3 +22,5 @@ class CSVDataset(Dataset):
     def __len__(self):
         return self.length // self.chunk_size
 
+def my_collate(batch):
+    return batch[0]

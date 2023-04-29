@@ -1,5 +1,5 @@
 import argparse
-from csv_dataset import CSVDataset
+from csv_dataset import CSVDataset, my_collate
 from detoxify import Detoxify
 from logger import create_logger
 import torch
@@ -8,10 +8,9 @@ import os
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='Inference')
-parser.add_argument("--data_type", choices=['questions', 'answers'], type=str, help="Data Type")
-parser.add_argument("--data_path", default="./sample_data/mini_answers_id",type=str, help="Path to data file")
-parser.add_argument("--chunk_size", default=2, type=int, help="Inference batch size")
-parser.add_argument("--output_path", default="./sample_data/mini_answers_score",type=str, help="Path to output file")
+parser.add_argument("--data_type", required=True, choices=['questions', 'answers'], type=str, help="Data Type")
+parser.add_argument("--data_path", default="./full_data",type=str, help="Path to data file")
+parser.add_argument("--chunk_size", default=100, type=int, help="Inference batch size")
 
 
 def main():
@@ -23,19 +22,23 @@ def main():
         device = torch.device('cpu')
     logger.info(f'Using device: {str(device).upper()}.')
 
+    
+    input_file = args.data_path + f"/{args.data_type}_id_part-r-00000.csv"
+    output_file = args.data_path + f"/{args.data_type}_score.csv"
+
     # dataset
     if args.data_type == "questions":
         header = ["Source", "YearOfCreation", "Id", "Score", "Body"]
     else:
         header = ["Source", "YearOfCreation", "ParentId", "Score", "Body"]
-    my_dataset = CSVDataset(path=args.data_path, header=header, chunk_size=args.chunk_size)
-    data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=lambda x: x[0], batch_size=1, shuffle=False)
+    my_dataset = CSVDataset(path=input_file, header=header, chunk_size=args.chunk_size)
+    data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=my_collate, batch_size=1, shuffle=False)
     
     model = Detoxify('original', device=device)
     use_header = True
     for key, body in tqdm(data_loader, desc="Scoring"):
         res = model.predict(body)
-        pd.DataFrame(res, index=key).round(5).rename_axis('Source').reset_index().to_csv(args.output_path, mode="a", index=False, header=use_header)
+        pd.DataFrame(res, index=key).round(5).rename_axis('Source').reset_index().to_csv(output_file, mode="a", index=False, header=use_header)
         use_header = False
 
 if __name__ == "__main__":
