@@ -39,8 +39,11 @@ def main():
     model = Detoxify('original', device=device)
     use_header = True
     for key, body in tqdm(data_loader, desc="Scoring"):
-        res = model.predict(body)
-        pd.DataFrame(res, index=key).round(5).rename_axis('Source').reset_index().to_csv(output_file, mode="a", index=False, header=use_header)
+        try:
+            res = model.predict(body)
+            pd.DataFrame(res, index=key).round(5).rename_axis('Source').reset_index().to_csv(output_file, mode="a", index=False, header=use_header)
+        except Exception:
+            continue
         use_header = False
 
 if __name__ == "__main__":

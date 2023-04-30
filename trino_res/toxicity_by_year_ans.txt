@@ -1,0 +1,13 @@
+# select a.year, avg(s.toxicity) as toxicity_avg, avg(s.severe_toxicity) as severe_toxicity_avg from ans a join a_score s on a.source=s.source group by a.year order by a.year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2008 | 0.0027232936 |       1.13947426E-4 
+ 2009 | 0.0028243964 |        1.1378153E-4 
+ 2010 | 0.0023702164 |        1.1030997E-4 
+ 2011 |  0.002241395 |        1.0866173E-4 
+ 2012 |  0.002303657 |        1.0800102E-4 
+ 2013 |  0.002371101 |        1.0743237E-4 
+ 2014 | 0.0024388963 |        1.0748425E-4 
+ 2015 | 0.0023615935 |        1.0699338E-4 
+ 2016 |  0.002326449 |        1.0700301E-4

@@ -15,6 +15,7 @@ class CSVDataset(Dataset):
                                 skiprows=idx * self.chunk_size,
                                 chunksize=self.chunk_size,
                                 names=self.header))
+        data_chunk["Body"] = data_chunk["Body"].astype(str)
         key = data_chunk[self.header[0]].values.tolist()
         body = data_chunk[self.header[-1]].values.tolist()
         return key, body
