@@ -23,14 +23,14 @@ def main():
     logger.info(f'Using device: {str(device).upper()}.')
 
     
-    input_file = args.data_path + f"/{args.data_type}_id_part-r-00000.csv"
+    input_file = args.data_path + f"/{args.data_type}_part-r-00000.csv"
     output_file = args.data_path + f"/{args.data_type}_score.csv"
 
     # dataset
     if args.data_type == "questions":
-        header = ["Source", "YearOfCreation", "Id", "Score", "Body"]
+        header = ["Source", "YearOfCreation", "Id", "Score", "CW_count", "Body"]
     else:
-        header = ["Source", "YearOfCreation", "ParentId", "Score", "Body"]
+        header = ["Source", "YearOfCreation", "ParentId", "Score", "CW_count","Body"]
     my_dataset = CSVDataset(path=input_file, header=header, chunk_size=args.chunk_size)
     data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=my_collate, batch_size=1, shuffle=False)
     
