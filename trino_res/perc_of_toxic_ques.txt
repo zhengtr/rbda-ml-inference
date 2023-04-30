@@ -1,0 +1,17 @@
+# percentage of questions with toxicity > 0.1
+
+# select year, (sum(is_toxic)*100.0)/(count(*)*1.0) as pct 
+# from (select q.year, case when s.toxicity > 0.1 then 1.0 else 0.0 end as is_toxic from ques q join q_score s on q.source=s.source) 
+# group by year order by year;
+
+ year | pct[%]  
+------+------
+ 2008 | 0.09 
+ 2009 | 0.12 
+ 2010 | 0.11 
+ 2011 | 0.09 
+ 2012 | 0.08 
+ 2013 | 0.10 
+ 2014 | 0.08 
+ 2015 | 0.08 
+ 2016 | 0.08

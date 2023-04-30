@@ -1,0 +1,25 @@
+# For questions with toxicity score < 0.5, the average toxicity score of the corresponding answers
+
+# select q.year, avg(sa.toxicity) as toxicity_avg, avg(sa.severe_toxicity) as severe_toxicity_avg
+# from ques q
+# join ans a
+# on q.postId = a.parentId
+# join q_score sq
+# on q.source = sq.source
+# join a_score sa
+# on a.source = sa.source
+# where sq.toxicity < 0.5
+# group by q.year 
+# order by q.year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2008 | 0.0028187283 |        1.1400911E-4 
+ 2009 | 0.0026853282 |       1.12828195E-4 
+ 2010 | 0.0023331828 |         1.100141E-4 
+ 2011 | 0.0022334512 |        1.0874319E-4 
+ 2012 | 0.0022927637 |        1.0789755E-4 
+ 2013 | 0.0023696232 |       1.07402804E-4 
+ 2014 |  0.002437131 |        1.0730543E-4 
+ 2015 |  0.002376367 |          1.06967E-4 
+ 2016 | 0.0023476325 |       1.06703505E-4 

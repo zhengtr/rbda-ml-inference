@@ -1,0 +1,17 @@
+# select year, avg(toxicity) as toxicity_avg, avg(severe_toxicity) as severe_toxicity_avg from
+# (select q.source, year, toxicity, severe_toxicity from ques q inner join q_score sq on q.source=sq.source
+# union all
+# select a.source, year, toxicity, severe_toxicity from ans a inner join a_score sa on a.source=sa.source)
+# group by year order by year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2008 | 0.0024816068 |       1.13620554E-4 
+ 2009 | 0.0025743963 |        1.1317498E-4 
+ 2010 | 0.0022124187 |        1.1052526E-4 
+ 2011 | 0.0021030547 |        1.0910236E-4 
+ 2012 | 0.0021715884 |         1.085145E-4 
+ 2013 | 0.0022477172 |         1.080367E-4 
+ 2014 | 0.0022833864 |        1.0800157E-4 
+ 2015 |  0.002230087 |       1.07611006E-4 
+ 2016 |  0.002176401 |         1.076485E-4
