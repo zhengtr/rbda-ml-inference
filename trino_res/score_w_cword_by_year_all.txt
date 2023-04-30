@@ -1,0 +1,13 @@
+# select year, avg(score) as curse_word_avg from (select year, score, cWord from ans union all select year, score, cWord from ques) where cWord > 0 group by year order by year; 
+
+ year |   curse_word_avg   
+------+--------------------
+ 2008 |  7.961165048543689 
+ 2009 | 11.018648018648019 
+ 2010 |  4.438030560271647 
+ 2011 |  3.895558223289316 
+ 2012 |  4.218816067653277 
+ 2013 | 2.0449640287769784 
+ 2014 | 1.2348411934552455 
+ 2015 |  0.915506958250497 
+ 2016 | 0.6262857142857143 

@@ -1,0 +1,15 @@
+# For questions contain c word, the average of total number of cword within the answers.
+
+# select q.year, avg(c.cWord_ans_sum) as avg_ans_w_cWord_sum from ques q inner join (select q.postId, count(*) as cWord_ans_sum from ques q join ans a on q.postId = a.parentId where q.cWord > 0 and a.cWord > 0 group by q.postId) c on q.postId = c.postId group by q.year order by q.year; 
+
+ year | avg_ans_w_cWord_sum 
+------+---------------------
+ 2008 |                 2.0 
+ 2009 |  1.4285714285714286 
+ 2010 |               1.125 
+ 2011 |  1.2115384615384615 
+ 2012 |  1.1379310344827587 
+ 2013 |                 1.2 
+ 2014 |  1.2727272727272727 
+ 2015 |  1.1538461538461537 
+ 2016 |  1.1153846153846154 

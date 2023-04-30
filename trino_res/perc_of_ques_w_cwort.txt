@@ -1,0 +1,15 @@
+# percentage of questions with cword
+
+# select year, (sum(has_cWord)*100.0)/(count(*)*1.0) as pct from (select year, postId, case when cWord>0 then 1.0 else 0.0 end as has_cWord from ques) group by year order by year;
+
+ year | pct[%]  
+------+------
+ 2008 | 0.27 
+ 2009 | 0.36 
+ 2010 | 0.37 
+ 2011 | 0.35 
+ 2012 | 0.27 
+ 2013 | 0.30 
+ 2014 | 0.27 
+ 2015 | 0.26 
+ 2016 | 0.25 
