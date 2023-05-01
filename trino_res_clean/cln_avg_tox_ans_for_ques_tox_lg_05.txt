@@ -1,4 +1,4 @@
-year,toxicity_avg,severe_toxicity_avg
+year,avg-ans-toxicity-of-toxic-ques,avg-ans-sev-toxicity-of-toxic-ques
 2009,0.18235308,3.023077E-4
 2010,0.06752,2.8846154E-4
 2011,0.09957,2.5E-4

@@ -1,4 +1,4 @@
-year,avg_tot_ans
+year,avg-num-ans-for-ques-w-word
 2008,4.375
 2009,2.9836065573770494
 2010,2.525691699604743

@@ -1,4 +1,4 @@
-year,pct[%]
+year,pct[%]-ans-w-cword
 2008,0.40
 2009,0.32
 2010,0.22

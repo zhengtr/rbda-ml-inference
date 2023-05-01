@@ -1,4 +1,4 @@
-year,avg_ans_w_cWord_sum
+year,avg-cword-ans-for-ques-wo-cword
 2008,1.2395833333333333
 2009,1.099644128113879
 2010,1.0379746835443038
