@@ -35,7 +35,7 @@ def main():
         header = ["Source","Body"]
 
     my_dataset = CSVDataset(path=input_file, header=header, chunk_size=args.chunk_size)
-    data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=my_collate, batch_size=1, shuffle=False)
+    data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=lambda x: x[0], batch_size=1, shuffle=False)
     
     model = Detoxify('original', device=device)
     use_header = True
