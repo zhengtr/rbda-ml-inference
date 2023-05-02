@@ -22,8 +22,8 @@ def main():
         device = torch.device('cpu')
     logger.info(f'Using device: {str(device).upper()}.')
 
-    # input_file = args.data_path + f"/{args.data_type}_part-r-00000.csv"
-    input_file = args.data_path + f"/mini_{args.data_type}.csv"
+    input_file = args.data_path + f"/{args.data_type}_part-r-00000.csv"
+    # input_file = args.data_path + f"/mini_{args.data_type}.csv"
     output_file = args.data_path + f"/{args.data_type}_score.csv"
 
     # dataset
@@ -38,16 +38,18 @@ def main():
     data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=lambda x: x[0], batch_size=1, shuffle=False)
     
     model = Detoxify('original', device=device)
-    use_header = True
+    use_header, invalid_count = True, 0
+    pbar = tqdm(data_loader, desc="Scoring")
     with open(output_file, 'a', newline='') as fp:
-        for key, body in tqdm(data_loader, desc="Scoring"):
+        for key, body in pbar:
             try:
                 res = model.predict(body)
                 pd.DataFrame(res, index=key).round(5).rename_axis('Source').reset_index().to_csv(fp, index=False, header=use_header)
             except Exception:
-                print(f"Excpt: {body}")
+                invalid_count += 1
                 continue
             use_header = False
+            pbar.set_postfix({'Invalid': {f"{invalid_count}"}})
 
 if __name__ == "__main__":
     main()
