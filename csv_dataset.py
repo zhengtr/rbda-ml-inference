@@ -16,7 +16,8 @@ class CSVDataset(Dataset):
                                 chunksize=self.chunk_size,
                                 names=self.header))
         data_chunk["Body"] = data_chunk["Body"].astype(str)
-        key = data_chunk[self.header[0]].values.tolist()
+        # key = data_chunk[self.header[0]].values.tolist()
+        key = ['in'] * self.chunk_size
         body = data_chunk[self.header[-1]].values.tolist()
         return key, body
     
