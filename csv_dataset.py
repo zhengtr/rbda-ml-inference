@@ -3,7 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 
 class CSVDataset(Dataset):
-    def __init__(self, path, header=None, chunk_size=100):
+    def __init__(self, path, header=None, chunk_size=256):
         self.path = path
         self.chunk_size = chunk_size
         self.header = header
@@ -11,13 +11,16 @@ class CSVDataset(Dataset):
         self.id_count = 0
         
     def __getitem__(self, idx):
-        data_chunk = next(pd.read_csv(self.path,
-                                skiprows=idx * self.chunk_size,
-                                chunksize=self.chunk_size,
-                                names=self.header))
+        data_chunk = next(
+            pd.read_csv(
+                self.path,
+                skiprows=idx * self.chunk_size,
+                chunksize=self.chunk_size,
+                names=self.header
+            )
+        )
         data_chunk["Body"] = data_chunk["Body"].astype(str)
-        # key = data_chunk[self.header[0]].values.tolist()
-        key = ['in'] * self.chunk_size
+        key = data_chunk[self.header[0]].values.tolist()
         body = data_chunk[self.header[-1]].values.tolist()
         return key, body
     
@@ -26,3 +29,4 @@ class CSVDataset(Dataset):
 
 def my_collate(batch):
     return batch[0]
+
