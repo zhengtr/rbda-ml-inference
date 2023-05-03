@@ -45,7 +45,7 @@ def main():
             res = model.predict(body)
             pd.DataFrame(res, index=key).round(5).rename_axis('Source').reset_index().to_csv(output_file+".csv", mode='a', index=False, header=use_header)
         except Exception:
-            invalid_count += 1
+            invalid_count += args.chunk_size
             continue
         total_count += 1
         if total_count % args.partition == 0:
