@@ -17,9 +17,11 @@ def main():
     args = parser.parse_args()
     logger = create_logger("inference.log")
     if torch.cuda.is_available():
-        device = torch.device('cuda') 
+        device = torch.device('cuda')
+        n_gpu = torch.cuda.device_count()
     else:
         device = torch.device('cpu')
+        n_gpu = torch.cuda.device_count()
     logger.info(f'Using device: {str(device).upper()}.')
 
     input_file = args.data_path + f"/{args.data_type}_part-r-00000.csv"
@@ -36,8 +38,10 @@ def main():
 
     my_dataset = CSVDataset(path=input_file, header=header, chunk_size=args.chunk_size)
     data_loader = torch.utils.data.DataLoader(my_dataset, collate_fn=lambda x: x[0], batch_size=1, shuffle=False)
-    
-    model = Detoxify('original', device=device)
+    if n_gpu > 1:
+        model = torch.nn.DataParallel(Detoxify('original'), device_ids=[0, 1])
+    else:
+        model = Detoxify('original', device=device)
     use_header, invalid_count, total_count = True, 0, 0
     pbar = tqdm(data_loader, desc="Scoring")
     for key, body in pbar:

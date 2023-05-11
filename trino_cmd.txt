@@ -1,0 +1,332 @@
+This file contains all the Trino commands for data analysis of StackOverflow data and cross-Platform analysis.
+
+* Abbreviation: curse word => cword
+
+1. The average of total number of answers per question, if question contains cword.
+
+# select q.year, avg(c.ans_total) from ques q inner join (select q.postId, count(*) as ans_total from ques q join ans a on q.postId = a.parentId where q.cWord > 0 group by q.postId) c on q.postId = c.postId group by q.year order by q.year;
+
+ year |     avg_tot_ans        
+------+--------------------
+ 2008 |              4.375 
+ 2009 | 2.9836065573770494 
+ 2010 |  2.525691699604743 
+ 2011 | 2.0856423173803527 
+ 2012 | 1.9688995215311005 
+ 2013 | 1.7581818181818183 
+ 2014 | 1.5748502994011977 
+ 2015 | 1.5019607843137255 
+ 2016 | 1.4764542936288088 
+
+2. The average of total number of answers per question, if question DOES NOT contain cword.
+
+# select q.year, avg(c.ans_total) from ques q inner join (select q.postId, count(*) as ans_total from ques q join ans a on q.postId = a.parentId where q.cWord = 0 group by q.postId) c on q.postId = c.postId group by q.year order by q.year;
+
+ year |     avg_tot_ans        
+------+--------------------
+ 2008 |  5.205132621426111 
+ 2009 |  3.292442913040939 
+ 2010 | 2.4522118902659473 
+ 2011 | 2.1244894273847503 
+ 2012 | 1.8947145034437078 
+ 2013 | 1.7617043493085005 
+ 2014 |  1.613797086231789 
+ 2015 | 1.5369720897998613 
+ 2016 | 1.4932841998451227 
+
+
+3. For questions contain c word, the average of total number of cword within the answers.
+
+# select q.year, avg(c.cWord_ans_sum) as avg_ans_w_cWord_sum from ques q inner join (select q.postId, count(*) as cWord_ans_sum from ques q join ans a on q.postId = a.parentId where q.cWord > 0 and a.cWord > 0 group by q.postId) c on q.postId = c.postId group by q.year order by q.year; 
+
+ year | avg_ans_w_cWord_sum 
+------+---------------------
+ 2008 |                 2.0 
+ 2009 |  1.4285714285714286 
+ 2010 |               1.125 
+ 2011 |  1.2115384615384615 
+ 2012 |  1.1379310344827587 
+ 2013 |                 1.2 
+ 2014 |  1.2727272727272727 
+ 2015 |  1.1538461538461537 
+ 2016 |  1.1153846153846154 
+
+
+4. For questions contain c word, the average of total number of cword within the answers.
+
+# select q.year, avg(c.cWord_ans_sum) as avg_ans_w_cWord_sum from ques q inner join (select q.postId, count(*) as cWord_ans_sum from ques q join ans a on q.postId = a.parentId where q.cWord = 0 and a.cWord > 0 group by q.postId) c on q.postId = c.postId group by q.year order by q.year; 
+
+ year | avg_ans_w_cWord_sum 
+------+---------------------
+ 2008 |  1.2395833333333333 
+ 2009 |   1.099644128113879 
+ 2010 |  1.0379746835443038 
+ 2011 |  1.0272479564032697 
+ 2012 |  1.0185614849187936 
+ 2013 |  1.0382513661202186 
+ 2014 |  1.0115273775216138 
+ 2015 |   1.013157894736842 
+ 2016 |  1.0082644628099173 
+
+
+5. For questions with toxicity score < 0.5, the average toxicity score of the corresponding answers
+
+# select q.year, avg(sa.toxicity) as toxicity_avg, avg(sa.severe_toxicity) as severe_toxicity_avg
+# from ques q
+# join ans a
+# on q.postId = a.parentId
+# join q_score sq
+# on q.source = sq.source
+# join a_score sa
+# on a.source = sa.source
+# where sq.toxicity < 0.5
+# group by q.year 
+# order by q.year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2008 | 0.0028187283 |        1.1400911E-4 
+ 2009 | 0.0026853282 |       1.12828195E-4 
+ 2010 | 0.0023331828 |         1.100141E-4 
+ 2011 | 0.0022334512 |        1.0874319E-4 
+ 2012 | 0.0022927637 |        1.0789755E-4 
+ 2013 | 0.0023696232 |       1.07402804E-4 
+ 2014 |  0.002437131 |        1.0730543E-4 
+ 2015 |  0.002376367 |          1.06967E-4 
+ 2016 | 0.0023476325 |       1.06703505E-4 
+
+
+6. For questions with toxicity score > 0.5, the average toxicity score of the corresponding answers
+
+# select q.year, avg(sa.toxicity) as toxicity_avg, avg(sa.severe_toxicity) as severe_toxicity_avg
+# from ques q
+# join ans a
+# on q.postId = a.parentId
+# join q_score sq
+# on q.source = sq.source
+# join a_score sa
+# on a.source = sa.source
+# where sq.toxicity > 0.5
+# group by q.year 
+# order by q.year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2009 |   0.18235308 |         3.023077E-4 
+ 2010 |      0.06752 |        2.8846154E-4 
+ 2011 |      0.09957 |              2.5E-4 
+ 2012 |  0.038452942 |        1.9352941E-4 
+ 2013 |   0.18300778 |        0.0012833334 
+ 2014 |  0.070339166 |             2.75E-4 
+ 2015 |  0.061669093 |        4.3272728E-4 
+ 2016 |  0.010006667 |        1.2666667E-4 
+
+
+7. Average cword per year - Answers
+# select year, avg(cWord) as curse_word_avg from ans group by year order by year;
+
+ year |    curse_word_avg     
+------+-----------------------
+ 2008 | 0.0049979175343606835 
+ 2009 |  0.004261230116870502 
+ 2010 | 0.0029508660589768984 
+ 2011 |  0.002682230007775846 
+ 2012 | 0.0024143517465560495 
+ 2013 |  0.002288863556804208 
+ 2014 |  0.002352235705763441 
+ 2015 |  0.002062378338455376 
+ 2016 |  0.002111076921878469
+
+
+8. Average cword per year - questions
+
+# select year, avg(cWord) as curse_word_avg from ques group by year order by year;
+
+ year |    curse_word_avg     
+------+-----------------------
+ 2008 |  0.005149330587023687 
+ 2009 |  0.004896421845574388 
+ 2010 |  0.005407471370128675 
+ 2011 |  0.005127273627979557 
+ 2012 | 0.0038391752081806275 
+ 2013 |  0.004789429424785176 
+ 2014 |  0.004281671505751774 
+ 2015 |  0.003925438405828602 
+ 2016 |  0.004373391961108558
+
+
+9. Average cword per year - Total
+
+# select year, avg(cWord) as curse_word_avg from (select year, cWord from ans union all select year, cWord from ques) group by year order by year;
+
+ year |    curse_word_avg     
+------+-----------------------
+ 2008 |  0.005030071077091307 
+ 2009 |  0.004429534323133377 
+ 2010 |  0.003743027470169897 
+ 2011 |  0.003528258925638015 
+ 2012 |   0.00293875059980143 
+ 2013 |  0.003244995296974356 
+ 2014 | 0.0031282682365288603 
+ 2015 | 0.0028422117575131194 
+ 2016 | 0.0031317471514996044 
+
+
+10. percentage of answers with cword
+
+# select year, (sum(has_cWord)*100.0)/(count(*)*1.0) as pct from (select year, case when cWord>0 then 1.0 else 0.0 end as has_cWord from ans) group by year order by year;
+
+ year | pct[%]  
+------+------
+ 2008 | 0.40 
+ 2009 | 0.32 
+ 2010 | 0.22 
+ 2011 | 0.18 
+ 2012 | 0.17 
+ 2013 | 0.15 
+ 2014 | 0.14 
+ 2015 | 0.13 
+ 2016 | 0.14
+
+
+ 11. percentage of questions with cword
+
+# select year, (sum(has_cWord)*100.0)/(count(*)*1.0) as pct from (select year, postId, case when cWord>0 then 1.0 else 0.0 end as has_cWord from ques) group by year order by year;
+
+ year | pct[%]  
+------+------
+ 2008 | 0.27 
+ 2009 | 0.36 
+ 2010 | 0.37 
+ 2011 | 0.35 
+ 2012 | 0.27 
+ 2013 | 0.30 
+ 2014 | 0.27 
+ 2015 | 0.26 
+ 2016 | 0.25 
+
+
+12. percentage of answers with toxicity > 0.1
+
+# select year, (sum(is_toxic)*100.0)/(count(*)*1.0) as pct 
+# from (select a.year, case when s.toxicity > 0.1 then 1.0 else 0.0 end as is_toxic from ans a join a_score s on a.source=s.source) 
+# group by year order by year;
+
+ year | pct[%]  
+------+------
+ 2008 | 0.32 
+ 2009 | 0.34 
+ 2010 | 0.22 
+ 2011 | 0.18 
+ 2012 | 0.18 
+ 2013 | 0.17 
+ 2014 | 0.18 
+ 2015 | 0.16 
+ 2016 | 0.14
+
+
+13. percentage of questions with toxicity > 0.1
+
+# select year, (sum(is_toxic)*100.0)/(count(*)*1.0) as pct 
+# from (select q.year, case when s.toxicity > 0.1 then 1.0 else 0.0 end as is_toxic from ques q join q_score s on q.source=s.source) 
+# group by year order by year;
+
+ year | pct[%]  
+------+------
+ 2008 | 0.09 
+ 2009 | 0.12 
+ 2010 | 0.11 
+ 2011 | 0.09 
+ 2012 | 0.08 
+ 2013 | 0.10 
+ 2014 | 0.08 
+ 2015 | 0.08 
+ 2016 | 0.08
+
+
+14. Average score of questions with cword
+# select year, avg(score) as curse_word_avg from (select year, score, cWord from ans union all select year, score, cWord from ques) where cWord > 0 group by year order by year; 
+
+ year |   curse_word_avg   
+------+--------------------
+ 2008 |  7.961165048543689 
+ 2009 | 11.018648018648019 
+ 2010 |  4.438030560271647 
+ 2011 |  3.895558223289316 
+ 2012 |  4.218816067653277 
+ 2013 | 2.0449640287769784 
+ 2014 | 1.2348411934552455 
+ 2015 |  0.915506958250497 
+ 2016 | 0.6262857142857143 
+
+
+15. Average score of questions without cword
+
+# select year, avg(score) as curse_word_avg from (select year, score, cWord from ans union all select year, score, cWord from ques) where cWord = 0 group by year order by year;
+
+ year |   curse_word_avg   
+------+--------------------
+ 2008 |  12.35376115908093 
+ 2009 |  6.386049771629709 
+ 2010 |  4.506387166167014 
+ 2011 |  3.470317699414086 
+ 2012 |  2.630159964723114 
+ 2013 | 1.9684220662223695 
+ 2014 |  1.337947441012302 
+ 2015 | 1.0598013730344207 
+ 2016 | 0.6676739877707935
+
+
+16. Avg Toxicity score of answer
+
+# select a.year, avg(s.toxicity) as toxicity_avg, avg(s.severe_toxicity) as severe_toxicity_avg from ans a join a_score s on a.source=s.source group by a.year order by a.year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2008 | 0.0027232936 |       1.13947426E-4 
+ 2009 | 0.0028243964 |        1.1378153E-4 
+ 2010 | 0.0023702164 |        1.1030997E-4 
+ 2011 |  0.002241395 |        1.0866173E-4 
+ 2012 |  0.002303657 |        1.0800102E-4 
+ 2013 |  0.002371101 |        1.0743237E-4 
+ 2014 | 0.0024388963 |        1.0748425E-4 
+ 2015 | 0.0023615935 |        1.0699338E-4 
+ 2016 |  0.002326449 |        1.0700301E-4
+
+
+17. Avg Toxicity score of questions
+
+ # select a.year, avg(s.toxicity) as toxicity_avg, avg(s.severe_toxicity) as severe_toxicity_avg from ques a join q_score s on a.source=s.source group by a.year order by a.year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2008 |  0.001585175 |        1.1240817E-4 
+ 2009 | 0.0018808787 |       1.11492394E-4 
+ 2010 | 0.0018808584 |       1.10977606E-4 
+ 2011 | 0.0018415856 |        1.0993519E-4 
+ 2012 | 0.0019448161 |        1.0939618E-4 
+ 2013 | 0.0020484156 |        1.0901287E-4 
+ 2014 | 0.0020522517 |        1.0877047E-4 
+ 2015 |  0.002047448 |       1.08468776E-4 
+ 2016 | 0.0019937987 |        1.0843403E-4
+
+
+18. Avg Toxicity score of all
+
+# select year, avg(toxicity) as toxicity_avg, avg(severe_toxicity) as severe_toxicity_avg from
+# (select q.source, year, toxicity, severe_toxicity from ques q inner join q_score sq on q.source=sq.source
+# union all
+# select a.source, year, toxicity, severe_toxicity from ans a inner join a_score sa on a.source=sa.source)
+# group by year order by year;
+
+ year | toxicity_avg | severe_toxicity_avg 
+------+--------------+---------------------
+ 2008 | 0.0024816068 |       1.13620554E-4 
+ 2009 | 0.0025743963 |        1.1317498E-4 
+ 2010 | 0.0022124187 |        1.1052526E-4 
+ 2011 | 0.0021030547 |        1.0910236E-4 
+ 2012 | 0.0021715884 |         1.085145E-4 
+ 2013 | 0.0022477172 |         1.080367E-4 
+ 2014 | 0.0022833864 |        1.0800157E-4 
+ 2015 |  0.002230087 |       1.07611006E-4 
+ 2016 |  0.002176401 |         1.076485E-4
